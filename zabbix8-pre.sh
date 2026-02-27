@@ -1,6 +1,6 @@
 #!/bin/bash
 # Author: 火星小刘 / 中国青岛
-# Install Zabbix 7.4 on CentOS, Rocky Linux, Debian, or Ubuntu
+# Install Zabbix 8.0 on CentOS, Rocky Linux, AlmaLinux, Debian, or Ubuntu
 
 # 设置默认密码变量
 DEFAULT_PASSWORD="huoxingxiaoliu"
@@ -40,7 +40,7 @@ echo -e "\e[32m加入QQ群一起开车一起学习: \e[0m\e[33m523870446\e[0m"
 echo -e "\e[32m作者github: \e[0m\e[33mhttps://github.com/X-Mars/\e[0m"
 echo -e "\e[32m跟作者学运维开发: \e[0m\e[33mhttps://space.bilibili.com/439068477\e[0m"
 echo -e "\e[32m本项目地址: \e[0m\e[33mhttps://github.com/X-Mars/Quick-Installation-ZABBIX\e[0m"
-echo -e "\e[32m当前脚本介绍: \e[0m\e[33mZabbix 7.4 安装脚本\e[0m"
+echo -e "\e[32m当前脚本介绍: \e[0m\e[33mZabbix 8.0 安装脚本\e[0m"
 echo -e "\e[32m支持的操作系统: \e[0m\e[33mcentos 8 / centos 9 / centos 10 / rocky linux 8 / rocky linux 9 / rocky linux 10 / ubuntu 22.04 / ubuntu 24.04 / debian 12 / almaLinux 8 / almaLinux 9 / almaLinux 10\e[0m"
 
 # 检查当前用户是否是root用户
@@ -52,12 +52,15 @@ else
 fi
 
 install_zabbix_release_on_centos_or_rocky() {
-  echo '为CentOS或Rocky Linux安装zabbix 7.4源...'
+  echo '为CentOS或Rocky Linux安装zabbix 8.0源...'
   if( [ "$VERSION_ID" == "8" ] || [ "$VERSION_ID" == "9" ] || [ "$VERSION_ID" == "10" ]); then
-    curl -O https://mirrors.tuna.tsinghua.edu.cn/zabbix/zabbix/7.4/release/${ID}/${VERSION_ID}/noarch/zabbix-release-latest-7.4.el${VERSION_ID}.noarch.rpm
-    rpm -ivh zabbix-release-latest-7.4.el${VERSION_ID}.noarch.rpm
+    curl -O https://mirrors.tuna.tsinghua.edu.cn/zabbix/zabbix/8.0/release/${ID}/${VERSION_ID}/noarch/zabbix-release-latest-8.0.el${VERSION_ID}.noarch.rpm
+    rpm -ivh zabbix-release-latest-8.0.el${VERSION_ID}.noarch.rpm
     if [ "$VERSION_ID" == "8" ]; then
-      dnf module switch-to php:8.0 -y
+      dnf module switch-to php:8.2 -y
+    fi
+    if [ "$VERSION_ID" == "9" ]; then
+      dnf module switch-to php:8.3 -y
     fi
   fi
   dnf module reset mariadb -y
@@ -67,10 +70,10 @@ install_zabbix_release_on_centos_or_rocky() {
 }
 
 install_zabbix_release_on_alma() {
-  echo '为AlmaLinux安装zabbix 7.4源...'
+  echo '为AlmaLinux安装zabbix 8.0源...'
   if( [ "$VERSION_ID" == "8" ] || [ "$VERSION_ID" == "9" ] || [ "$VERSION_ID" == "10" ]); then
-    curl -O https://mirrors.tuna.tsinghua.edu.cn/zabbix/zabbix/7.4/release/alma/${VERSION_ID}/noarch/zabbix-release-latest-7.4.el${VERSION_ID}.noarch.rpm
-    rpm -ivh zabbix-release-latest-7.4.el${VERSION_ID}.noarch.rpm
+    curl -O https://mirrors.tuna.tsinghua.edu.cn/zabbix/zabbix/8.0/release/alma/${VERSION_ID}/noarch/zabbix-release-latest-8.0.el${VERSION_ID}.noarch.rpm
+    rpm -ivh zabbix-release-latest-8.0.el${VERSION_ID}.noarch.rpm
   fi
   dnf module reset mariadb -y
   sed -i 's/repo\.zabbix\.com/mirrors\.aliyun\.com\/zabbix/' /etc/yum.repos.d/zabbix.repo
@@ -145,10 +148,10 @@ config_ufw_on_ubuntu_or_debian() {
 }
 
 install_zabbix_release_on_ubuntu_or_debain() {
-  echo '为Ubuntu或Debian安装zabbix 7.4源...'
+  echo '为Ubuntu或Debian安装zabbix 8.0源...'
   apt install curl -y
-  curl -O https://mirrors.tuna.tsinghua.edu.cn/zabbix/zabbix/7.4/release/${ID}/pool/main/z/zabbix-release/zabbix-release_latest-7.4+${ID}${VERSION_ID}_all.deb
-  dpkg -i "zabbix-release_latest-7.4+${ID}${VERSION_ID}_all.deb"
+  curl -O https://mirrors.tuna.tsinghua.edu.cn/zabbix/zabbix/8.0/release/${ID}/pool/main/z/zabbix-release/zabbix-release_latest_8.0+${ID}${VERSION_ID}_all.deb
+  dpkg -i "zabbix-release_latest_8.0+${ID}${VERSION_ID}_all.deb"
 
   sed -i 's/repo\.zabbix\.com/mirrors\.aliyun\.com\/zabbix/' /etc/apt/sources.list.d/zabbix.list
   sed -i 's/repo\.zabbix\.com/mirrors\.aliyun\.com\/zabbix/' /etc/apt/sources.list.d/zabbix-agent2-plugins.list
@@ -184,12 +187,12 @@ init_database() {
   echo "grant all privileges on zabbix.* to zabbix@localhost;" | mariadb -uroot -p$DEFAULT_PASSWORD
   echo "set global log_bin_trust_function_creators = 1;" | mariadb -uroot -p$DEFAULT_PASSWORD
 
-  # 注意：Zabbix 7.4 SQL脚本路径可能有所变化
+  # Zabbix 8.0 SQL脚本路径变更为 /usr/share/zabbix/sql-scripts/
   # 导入初始化数据
-  if [ -f /usr/share/zabbix-sql-scripts/mysql/server.sql.gz ]; then
-    zcat /usr/share/zabbix-sql-scripts/mysql/server.sql.gz | mariadb --default-character-set=utf8mb4 -uzabbix -p$DEFAULT_PASSWORD zabbix
-  elif [ -f /usr/share/zabbix/sql-scripts/mysql/server.sql.gz ]; then
+  if [ -f /usr/share/zabbix/sql-scripts/mysql/server.sql.gz ]; then
     zcat /usr/share/zabbix/sql-scripts/mysql/server.sql.gz | mariadb --default-character-set=utf8mb4 -uzabbix -p$DEFAULT_PASSWORD zabbix
+  elif [ -f /usr/share/zabbix-sql-scripts/mysql/server.sql.gz ]; then
+    zcat /usr/share/zabbix-sql-scripts/mysql/server.sql.gz | mariadb --default-character-set=utf8mb4 -uzabbix -p$DEFAULT_PASSWORD zabbix
   else
     echo -e "\e[31m未找到Zabbix SQL初始化脚本，请检查安装路径！\e[0m"
     exit 1
@@ -234,7 +237,7 @@ notification() {
   echo -e "\e[32m作者github: \e[0m\e[33mhttps://github.com/X-Mars/\e[0m"
   echo -e "\e[32m跟作者学运维开发: \e[0m\e[33mhttps://space.bilibili.com/439068477\e[0m"
   echo -e "\e[32m本项目地址: \e[0m\e[33mhttps://github.com/X-Mars/Quick-Installation-ZABBIX\e[0m"
-  echo -e "\e[32m当前脚本介绍: \e[0m\e[33mZabbix 7.4 安装脚本\e[0m"
+  echo -e "\e[32m当前脚本介绍: \e[0m\e[33mZabbix 8.0 安装脚本\e[0m"
   echo -e "\e[32m支持的操作系统: \e[0m\e[33mcentos 8 / centos 9 / centos 10 / rocky linux 8 / rocky linux 9 / rocky linux 10 / ubuntu 22.04 / ubuntu 24.04 / debian 12 / almaLinux 8 / almaLinux 9 / almaLinux 10\e[0m"
 
   echo -e "\n\e[31m数据库root用户和zabbix用户默认密码均为: $DEFAULT_PASSWORD\e[0m"
@@ -248,7 +251,7 @@ notification() {
     ip=$(ifconfig | grep -oP 'inet\s+\K[\d.]+')
   fi
 
-  # 使用for循环打印IP地址,并在每次打印后输出 "ok"
+  # 使用for循环打印IP地址
   for i in $ip; do
     echo -e "\e[32m访问继续下一步操作:  http://$i/zabbix\e[0m"
   done
@@ -265,7 +268,7 @@ notification() {
 add_wechat_dingtalk_feishu_scripts() {
   echo -e "\n\e[31m拉取Zabbix cmdb 和报表模块，具体查看：https://gitee.com/xtlyk/zabbix_modules\e[0m"
   echo -e "\e[31m此操作不影响zabbix使用\e[0m"
-  echo -e "\e[31m你可以在“管理”-“常规”-“模块”中点击“扫描目录”后，在列表中查找并启用两个模块\e[0m"
+  echo -e "\e[31m你可以在"管理"-"常规"-"模块"中点击"扫描目录"后，在列表中查找并启用两个模块\e[0m"
   git clone https://gitee.com/xtlyk/zabbix_modules.git /usr/share/zabbix/ui/modules
   ls -la /usr/share/zabbix/ui/modules
 

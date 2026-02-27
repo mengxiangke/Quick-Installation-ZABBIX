@@ -260,10 +260,10 @@ add_wechat_dingtalk_feishu_scripts() {
   git clone https://gitee.com/xtlyk/zabbix_modules.git /usr/share/zabbix/modules
   ls -la /usr/share/zabbix/modules
 
-  echo -e "\n\e[31m拉取企业微信、钉钉、飞书告警脚本,具体查看: https://github.com/X-Mars/Zabbix-Alert-WeChat\e[0m"
+  echo -e "\n\e[31m拉取企业微信、钉钉、飞书告警脚本,具体查看: https://gitee.com/xtlyk/Zabbix-Alert-WeChat\e[0m"
   echo -e "\e[31m此操作不影响zabbix使用\e[0m"
   echo -e "\e[31m运行命令: ls -la /usr/lib/zabbix/alertscripts 查看脚本\e[0m"
-  git clone https://github.com/X-Mars/Zabbix-Alert-WeChat.git /usr/lib/zabbix/alertscripts
+  git clone https://gitee.com/xtlyk/Zabbix-Alert-WeChat.git /usr/lib/zabbix/alertscripts
   ls -la /usr/lib/zabbix/alertscripts
 }
 

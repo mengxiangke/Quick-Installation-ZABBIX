@@ -19,6 +19,14 @@
 
 <img src="https://github.com/X-Mars/Quick-Installation-ZABBIX/blob/master/images/1.jpg?raw=true" width="25%" height="25%"><img src="https://github.com/X-Mars/Quick-Installation-ZABBIX/blob/master/images/2.jpg?raw=true" width="45%" height="45%"><img src="https://github.com/X-Mars/Quick-Installation-ZABBIX/blob/master/images/3.png?raw=true" width="30%" height="30%">
 
+### zabbix 8.0 pre食用方法
+1. centos 9 / centos 10 / rocky linux 8 / rocky linux 9 / rocky linux 10 / ubuntu 22.04 / ubuntu 24.04 / debian 12 / almaLinux 8 / almaLinux 9 / almaLinux 10
+```shell
+git clone https://github.com/X-Mars/Quick-Installation-ZABBIX.git
+cd Quick-Installation-ZABBIX
+bash zabbix8-pre.sh
+```
+
 ### zabbix 7.4 食用方法
 1. centos 8（强烈不推荐） / centos 9 / centos 10 / rocky linux 8 / rocky linux 9 / rocky linux 10 / ubuntu 22.04 / ubuntu 24.04 / debian 12 / almaLinux 8 / almaLinux 9 / almaLinux 10
 ```shell
@@ -72,6 +80,9 @@ bash centos-7.sh
 <img align="left" src = "https://profile-counter.glitch.me/Quick-Installation-ZABBIX/count.svg" alt="Loading">
     
 ## 更新日志
+
+### 2026-02-27更新
+1. 添加zabbix 8.0 pre版本部署脚本
 
 ### 2025-10-18更新
 1. 添加作者开发的zabbix cmdb 和 报表模块支持
